@@ -58,7 +58,7 @@ def option_parser():
     parser.add_argument("--initrd",
         help="Installer initrd filename. Ex: --initrd initrd.img")
     parser.add_argument("--network",
-        help="IP network duaring kickstart.\nEx: --network ip=192.168.1.10::192.168.1.255:24:localhost:ens3:none")
+        help="IP network duaring kickstart.\nEx: --network ip=192.168.1.10::192.168.1.254:24:localhost:ens3:none")
     parser.add_argument("--dns",
         default="",
         help="DNS Server duaring kickstart. Ex: --dns 192.168.1.53")

@@ -95,7 +95,7 @@ optional arguments:
   --kernel KERNEL       Installer Kernel filename. Ex: --kernel vmlinuz
   --initrd INITRD       Installer initrd filename. Ex: --initrd initrd.img
   --network NETWORK     IP network duaring kickstart.
-                        Ex: --network ip=192.168.1.10::192.168.1.255:24:localhost:ens3:none
+                        Ex: --network ip=192.168.1.10::192.168.1.254:24:localhost:ens3:none
   --dns DNS             DNS Server duaring kickstart. Ex: --dns 192.168.1.53
   --ks URI              RHEL/CentOS Kickstart file URI. Ex: --ks http://example.com/server.cfg
   --ps URI              Debian/Ubuntu preseed file URI. Ex: --ps http://example.com/server.seed
