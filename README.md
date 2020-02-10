@@ -115,7 +115,7 @@ $ ./ovirt-guest-install.py \
    --iso CentOS-8.1.1911-x86_64-dvd1.iso \
    --kernel vmlinuz-c81 \
    --initrd initrd-c81.img \
-   --network 192.168.1.8::192.168.1.254:24:centos8.local:ens3:none \
+   --network ip=192.168.1.8::192.168.1.254:24:centos8.local:ens3:none \
    --dns 192.168.1.53 \
    --ks http://ks.example.com/centos8.local.cfg
 ```
