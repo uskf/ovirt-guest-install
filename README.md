@@ -69,6 +69,7 @@ usage: ovirt-guest-install.py [-h] [--name NAME] [--memory MEMORY]
                               [--guaranteed-memory GUARANTEED_MEMORY]
                               [--cpu CPU] [--vmnet NETWORKNAME]
                               [--vmdisk SD:SIZE:FORMAT] [--os OSNAME]
+                              [--type {server,desktop,high_performance}]
                               [--iso ISO] [--kernel KERNEL] [--initrd INITRD]
                               [--network NETWORK] [--dns DNS] [--ks URI]
                               [--ps URI]
@@ -91,6 +92,8 @@ optional arguments:
                         This option can be specified multiple times.(first disk marked as bootable)
   --os OSNAME           OS name being installed (Default:rhel8)
                         Shorthand:debian,rhel6,rhel7,rhel8,ubuntu
+  --type {server,desktop,high_performance}
+                        Virtual Machine Type (Default:server)
   --iso ISO             Installer ISO filename. Ex: --iso CentOS.iso
   --kernel KERNEL       Installer Kernel filename. Ex: --kernel vmlinuz
   --initrd INITRD       Installer initrd filename. Ex: --initrd initrd.img

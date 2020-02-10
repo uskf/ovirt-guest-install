@@ -51,6 +51,11 @@ def option_parser():
         default="rhel8",
         help='OS name being installed (Default:%(default)s)\nShorthand:debian,rhel6,rhel7,rhel8,ubuntu')
     parser.add_argument(
+        "--type",
+        choices=['server','desktop','high_performance'],
+        default="server",
+        help='Virtual Machine Type (Default:%(default)s)')
+    parser.add_argument(
         "--iso",
         help="Installer ISO filename. Ex: --iso CentOS.iso")
     parser.add_argument("--kernel",
@@ -60,7 +65,6 @@ def option_parser():
     parser.add_argument("--network",
         help="IP network duaring kickstart.\nEx: --network ip=192.168.1.10::192.168.1.254:24:localhost:ens3:none")
     parser.add_argument("--dns",
-        default="",
         help="DNS Server duaring kickstart. Ex: --dns 192.168.1.53")
     parser.add_argument("--ks",
         metavar="URI",
@@ -267,6 +271,12 @@ def main():
         'debian': 'debian_7',
     }
 
+    vmtype={
+        'server': types.VmType.SERVER,
+        'desktop': types.VmType.DESKTOP,
+        'high_performance': types.VmType.HIGH_PERFORMANCE
+    }
+
     # Creating new virtual machine
     vm = types.Vm()
     vm.name = args.name
@@ -284,6 +294,7 @@ def main():
     vm.cpu.architecture = types.Architecture.X86_64
     vm.cpu.topology = types.CpuTopology(
         cores=1, sockets=args.cpu, threads=1)
+    vm.type = vmtype[args.type]
 
     print("Creating New Virtual Machine:{0}".format(args.name))
     vm = vms_service.add(vm)
@@ -362,6 +373,10 @@ def main():
         one_vm.cdroms.append(types.Cdrom())
         one_vm.cdroms[0].file = types.File()
         one_vm.cdroms[0].file.id = args.iso
+        if args.dns == None:
+            args.dns = ""
+        else:
+            args.dns = 'nameserver='+args.dns
 
         if args.ks != None:
             one_vm.os.cmdline = args.network+" "+args.dns+" inst.ks="+args.ks
