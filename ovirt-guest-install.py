@@ -58,6 +58,10 @@ def option_parser():
     parser.add_argument(
         "--iso",
         help="Installer ISO filename. Ex: --iso CentOS.iso")
+    parser.add_argument(
+        "--template",
+        default="Blank",
+        help='Virtual Machine Template (Default:%(default)s)')
     parser.add_argument("--kernel",
         help="Installer Kernel filename. Ex: --kernel vmlinuz")
     parser.add_argument("--initrd",
@@ -231,6 +235,12 @@ def later_option_check(args,conn):
         print("Specified iso file \"{0}\" is not exist in iso domain,abort".format(args.iso))
         return False
 
+    # Check VM Template
+    templates_service = conn.system_service().templates_service()
+    if not templates_service.list(search='name=%s' % args.template):
+        print("Specified VM Template \"{0}\" is not exist,abort".format(args.template))
+        return False
+
     return True
 
 
@@ -281,7 +291,7 @@ def main():
     vm = types.Vm()
     vm.name = args.name
     vm.cluster = types.Cluster(name=clustername)
-    vm.template = types.Template(name='Blank')
+    vm.template = types.Template(name=args.template)
     if args.os in shorthand.keys():
         vm.os = types.OperatingSystem(type=shorthand[args.os])
     else:
