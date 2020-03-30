@@ -70,7 +70,8 @@ usage: ovirt-guest-install.py [-h] [--name NAME] [--memory MEMORY]
                               [--cpu CPU] [--vmnet NETWORKNAME]
                               [--vmdisk SD:SIZE:FORMAT] [--os OSNAME]
                               [--type {server,desktop,high_performance}]
-                              [--iso ISO] [--kernel KERNEL] [--initrd INITRD]
+                              [--iso ISO] [--template TEMPLATE]
+                              [--kernel KERNEL] [--initrd INITRD]
                               [--network NETWORK] [--dns DNS] [--ks URI]
                               [--ps URI]
 
@@ -95,6 +96,7 @@ optional arguments:
   --type {server,desktop,high_performance}
                         Virtual Machine Type (Default:server)
   --iso ISO             Installer ISO filename. Ex: --iso CentOS.iso
+  --template TEMPLATE   Virtual Machine Template (Default:Blank)
   --kernel KERNEL       Installer Kernel filename. Ex: --kernel vmlinuz
   --initrd INITRD       Installer initrd filename. Ex: --initrd initrd.img
   --network NETWORK     IP network duaring kickstart.
