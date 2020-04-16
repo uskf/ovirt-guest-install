@@ -89,6 +89,16 @@ def is_int(s):
 
     return True
 
+def calc_netmask(p):
+    m=0
+    for i in range((31-p),31):
+        m+=2<<i
+
+    return("{0}.{1}.{2}.{3}".format(
+                                 (m>>24 & 0b11111111),
+                                 (m>>16 & 0b11111111),
+                                 (m>>8  & 0b11111111),
+                                 (m     & 0b11111111)))
 
 def early_option_check(args):
 
@@ -385,11 +395,23 @@ def main():
         one_vm.cdroms[0].file.id = args.iso
         if args.dns == None:
             args.dns = ""
+        elif args.os == 'rhel6':
+            args.dns = 'dns='+args.dns
         else:
             args.dns = 'nameserver='+args.dns
 
+        if args.os == 'rhel6':
+            ksdev = args.network.split(':')[5]
+            ksip  = args.network.split(':')[0]
+            ksnm  = calc_netmask(int(args.network.split(':')[3]))
+            ksgw  = args.network.split(':')[2]
+            args.network = "ksdevice={0} ip={1} netmask={2} gateway={3}".format(ksdev, ksip, ksnm, ksgw)
+
         if args.ks != None:
-            one_vm.os.cmdline = args.network+" "+args.dns+" inst.ks="+args.ks
+            if args.os == 'rhel6':
+                one_vm.os.cmdline = args.network+" "+args.dns+" ks="+args.ks
+            else:
+                one_vm.os.cmdline = args.network+" "+args.dns+" inst.ks="+args.ks
         if args.ps != None:
             one_vm.os.cmdline = "auto=true url="+args.ps
 
