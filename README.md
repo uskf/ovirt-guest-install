@@ -70,10 +70,12 @@ usage: ovirt-guest-install.py [-h] [--name NAME] [--memory MEMORY]
                               [--cpu CPU] [--vmnet NETWORKNAME]
                               [--vmdisk SD:SIZE:FORMAT] [--os OSNAME]
                               [--type {server,desktop,high_performance}]
-                              [--iso ISO] [--template TEMPLATE]
-                              [--kernel KERNEL] [--initrd INITRD]
-                              [--network NETWORK] [--dns DNS] [--ks URI]
-                              [--ps URI]
+                              [--enable-memory-balloon]
+                              [--disable-memory-balloon] [--enable-sound]
+                              [--disable-sound] [--iso ISO]
+                              [--template TEMPLATE] [--kernel KERNEL]
+                              [--initrd INITRD] [--network NETWORK]
+                              [--dns DNS] [--ks URI] [--ps URI]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -95,6 +97,12 @@ optional arguments:
                         Shorthand:debian,rhel6,rhel7,rhel8,ubuntu
   --type {server,desktop,high_performance}
                         Virtual Machine Type (Default:server)
+  --enable-memory-balloon
+                        force enable memory ballooning
+  --disable-memory-balloon
+                        force disable memory ballooning
+  --enable-sound        force enable soundcard
+  --disable-sound       force disable soundcard
   --iso ISO             Installer ISO filename. Ex: --iso CentOS.iso
   --template TEMPLATE   Virtual Machine Template (Default:Blank)
   --kernel KERNEL       Installer Kernel filename. Ex: --kernel vmlinuz

@@ -56,6 +56,34 @@ def option_parser():
         default="server",
         help='Virtual Machine Type (Default:%(default)s)')
     parser.add_argument(
+        "--enable-memory-balloon",
+        default=0,
+        action="store_const",
+        const=1,
+        dest="balloon",
+        help="force enable memory ballooning")
+    parser.add_argument(
+        "--disable-memory-balloon",
+        default=0,
+        action="store_const",
+        const=-1,
+        dest="balloon",
+        help="force disable memory ballooning")
+    parser.add_argument(
+        "--enable-sound",
+        default=0,
+        action="store_const",
+        const=1,
+        dest="sound",
+        help="force enable soundcard")
+    parser.add_argument(
+        "--disable-sound",
+        default=0,
+        action="store_const",
+        const=-1,
+        dest="sound",
+        help="force disable soundcard")
+    parser.add_argument(
         "--iso",
         help="Installer ISO filename. Ex: --iso CentOS.iso")
     parser.add_argument(
@@ -307,13 +335,22 @@ def main():
     else:
         vm.os = types.OperatingSystem(type=args.os)
     vm.memory = args.memory*1024*1024
-    vm.memory_policy = types.MemoryPolicy(
-        max=args.max_memory*1024*1024,
-        guaranteed=args.guaranteed_memory*1024*1024)
+    if args.balloon == 0:
+        vm.memory_policy = types.MemoryPolicy(
+            max=args.max_memory*1024*1024,
+            guaranteed=args.guaranteed_memory*1024*1024)
+    else:
+        vm.memory_policy = types.MemoryPolicy(
+            max=args.max_memory*1024*1024,
+            guaranteed=args.guaranteed_memory*1024*1024,
+            ballooning = True if args.balloon == 1 else False)
+
     vm.cpu = types.Cpu()
     vm.cpu.architecture = types.Architecture.X86_64
     vm.cpu.topology = types.CpuTopology(
         cores=1, sockets=args.cpu, threads=1)
+    if args.sound != 0:
+        vm.soundcard_enabled = True if args.sound == 1 else False
     vm.type = vmtype[args.type]
 
     print("Creating New Virtual Machine:{0}".format(args.name))
