@@ -75,7 +75,7 @@ usage: ovirt-guest-install.py [-h] [--name NAME] [--memory MEMORY]
                               [--disable-sound] [--iso ISO]
                               [--template TEMPLATE] [--kernel KERNEL]
                               [--initrd INITRD] [--network NETWORK]
-                              [--dns DNS] [--ks URI] [--ps URI]
+                              [--dns DNS] [--ks URI] [--ps URI] [--ai URI]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -112,6 +112,7 @@ optional arguments:
   --dns DNS             DNS Server duaring kickstart. Ex: --dns 192.168.1.53
   --ks URI              RHEL/CentOS Kickstart file URI. Ex: --ks http://example.com/server.cfg
   --ps URI              Debian/Ubuntu preseed file URI. Ex: --ps http://example.com/server.seed
+  --ai URI              Ubuntu autoinstall URI. Ex: --ai http://example.com/
 
 ```
 
@@ -145,5 +146,19 @@ $ ./ovirt-guest-install.py \
    --kernel vmlinuz-u1804 \
    --initrd initrd-u1804.gz \
    --ps http://ps.example.com/ubuntu1804.local.seed
+```
+- Ubuntu with autoinstall
+```
+$ ./ovirt-guest-install.py \
+   --name ubuntu2004.local \
+   --memory 2048 \
+   --cpu 1 \
+   --vmnet ovirtmgmt \
+   --vmdisk data:30:COW \
+   --os ubuntu \
+   --iso ubuntu-20.04.1-live-server-amd64.iso \
+   --kernel vmlinuz-u2004 \
+   --initrd initrd-u2004 \
+   --ai http://ps.example.com/ubuntu2004/
 ```
 

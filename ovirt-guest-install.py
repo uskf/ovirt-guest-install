@@ -104,6 +104,9 @@ def option_parser():
     parser.add_argument("--ps",
         metavar="URI",
         help="Debian/Ubuntu preseed file URI. Ex: --ps http://example.com/server.seed")
+    parser.add_argument("--ai",
+        metavar="URI",
+        help="Ubuntu autoinstall URI. Ex: --ai http://example.com/")
 
     return parser
 
@@ -419,7 +422,7 @@ def main():
             print("Waiting disk attach complete")
             time.sleep(5)
 
-    if args.ks != None or args.ps != None:
+    if args.ks != None or args.ps != None or args.ai != None:
         # one-shot VM configuration for Kickstart/preseed
         one_vm = types.Vm()
         one_vm.os = types.OperatingSystem()
@@ -451,6 +454,8 @@ def main():
                 one_vm.os.cmdline = args.network+" "+args.dns+" inst.ks="+args.ks
         if args.ps != None:
             one_vm.os.cmdline = "auto=true url="+args.ps
+        if args.ai != None:
+            one_vm.os.cmdline = "autoinstall ds=nocloud-net;s="+args.ai
 
         vm_service = vms_service.vm_service(vm.id)
         print("Starting automatic OS installation on {0}".format(args.name))
