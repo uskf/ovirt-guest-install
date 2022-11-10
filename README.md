@@ -6,7 +6,7 @@ virt-install like script for oVirt environment
 
 1. install ovirt-engine-sdk-python
 ```
-$ sudo yum install python-ovirt-engine-sdk4
+$ sudo yum install python3-ovirt-engine-sdk4
 ```
 or
 ```
