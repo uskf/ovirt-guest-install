@@ -52,7 +52,7 @@ def option_parser():
         help='OS name being installed (Default:%(default)s)\nShorthand:debian,rhel6,rhel7,rhel8,ubuntu')
     parser.add_argument(
         "--type",
-        choices=['server','desktop','high_performance'],
+        choices=['server', 'desktop', 'high_performance'],
         default="server",
         help='Virtual Machine Type (Default:%(default)s)')
     parser.add_argument(
@@ -90,21 +90,28 @@ def option_parser():
         "--template",
         default="Blank",
         help='Virtual Machine Template (Default:%(default)s)')
-    parser.add_argument("--kernel",
+    parser.add_argument(
+        "--kernel",
         help="Installer Kernel filename. Ex: --kernel vmlinuz")
-    parser.add_argument("--initrd",
+    parser.add_argument(
+        "--initrd",
         help="Installer initrd filename. Ex: --initrd initrd.img")
-    parser.add_argument("--network",
+    parser.add_argument(
+        "--network",
         help="IP network duaring kickstart.\nEx: --network ip=192.168.1.10::192.168.1.254:24:localhost:ens3:none")
-    parser.add_argument("--dns",
+    parser.add_argument(
+        "--dns",
         help="DNS Server duaring kickstart. Ex: --dns 192.168.1.53")
-    parser.add_argument("--ks",
+    parser.add_argument(
+        "--ks",
         metavar="URI",
         help="RHEL/CentOS Kickstart file URI. Ex: --ks http://example.com/server.cfg")
-    parser.add_argument("--ps",
+    parser.add_argument(
+        "--ps",
         metavar="URI",
         help="Debian/Ubuntu preseed file URI. Ex: --ps http://example.com/server.seed")
-    parser.add_argument("--ai",
+    parser.add_argument(
+        "--ai",
         metavar="URI",
         help="Ubuntu autoinstall URI. Ex: --ai http://example.com/")
 
@@ -115,43 +122,45 @@ def is_int(s):
 
     try:
         int(s)
-    except:
+    except ValueError:
         return False
 
     return True
 
-def calc_netmask(p):
-    m=0
-    for i in range((31-p),31):
-        m+=2<<i
 
-    return("{0}.{1}.{2}.{3}".format(
-                                 (m>>24 & 0b11111111),
-                                 (m>>16 & 0b11111111),
-                                 (m>>8  & 0b11111111),
-                                 (m     & 0b11111111)))
+def calc_netmask(p):
+    m = 0
+    for i in range((31-p), 31):
+        m += 2 << i
+
+    return ("{0}.{1}.{2}.{3}".format(
+                                 (m >> 24 & 0b11111111),
+                                 (m >> 16 & 0b11111111),
+                                 (m >> 8 & 0b11111111),
+                                 (m & 0b11111111)))
+
 
 def early_option_check(args):
 
-    if args.name == None:
+    if args.name is None:
         print("virtual machine name is not specified,abort")
         return False
 
-    if args.max_memory == None:
+    if args.max_memory is None:
         args.max_memory = args.memory*2
     else:
         if not args.memory <= args.max_memory:
             print("Max memory must be equal or grater than memory,abort")
             return False
 
-    if args.guaranteed_memory == None:
+    if args.guaranteed_memory is None:
         args.guaranteed_memory = int(args.memory/2)
     else:
         if args.memory < args.guaranteed_memory:
             print("Guaranteed memory must be equal or smaller than memory,abort")
             return False
 
-    if args.vmdisk == None:
+    if args.vmdisk is None:
         print("virtual disk is not specified,abort")
         return False
 
@@ -164,32 +173,32 @@ def early_option_check(args):
             print("Specified disk size \"{0}\" is not integer,abort".format(d.split(':')[1]))
             return False
 
-        if not d.split(':')[2] in ['RAW','COW']:
+        if not d.split(':')[2] in ['RAW', 'COW']:
             print("Specified disk format \"{0}\" is not valid,abort".format(d.split(':')[2]))
             return False
 
-    if args.ks != None or args.ps != None:
-        if args.iso == None:
+    if args.ks is not None or args.ps is not None:
+        if args.iso is None:
             print("ISO filename is not specified,abort")
             return False
 
-        if args.kernel == None:
+        if args.kernel is None:
             print("Installer kernel filename is not specified,abort")
             return False
 
-        if args.initrd == None:
+        if args.initrd is None:
             print("Installer initrd filename is not specified,abort")
             return False
 
-        if args.vmnet == None:
+        if args.vmnet is None:
             print("virtual machine network is not specified,abort")
             return False
 
-    if args.os.startswith("rhel") and args.ks != None and args.network == None:
+    if args.os.startswith("rhel") and args.ks is not None and args.network is None:
         print("Installer network is not specified,abort")
         return False
 
-    if args.ks != None and args.ps != None:
+    if args.ks is not None and args.ps is not None:
         print("Both of kickstart and pressed are specified,abort")
         return False
 
@@ -200,9 +209,8 @@ def get_data_domains(conn):
 
     dom = []
     sds_service = conn.system_service().storage_domains_service()
-
     for sd in sds_service.list():
-        if sd.type == types.StorageDomainType.DATA:
+        if sd.type == (types.StorageDomainType.DATA):
             dom.append(sd.name)
     return dom
 
@@ -227,9 +235,14 @@ def get_iso_domain_files(conn):
     iso_files = []
 
     for sd in attached_sds_service.list():
-        if(sd.type == types.StorageDomainType.ISO):
-            if(sd.status == types.StorageDomainStatus.ACTIVE):
-                files_service = conn.system_service().storage_domains_service().storage_domain_service(sd.id).files_service()
+        if sd.type == (types.StorageDomainType.ISO):
+            if sd.status == types.StorageDomainStatus.ACTIVE:
+                files_service = (
+                        conn.system_service()
+                            .storage_domains_service()
+                            .storage_domain_service(sd.id)
+                            .files_service()
+                )
                 for f in files_service.list():
                     iso_files.append(f.name)
                 return iso_files
@@ -241,7 +254,7 @@ def get_iso_domain_files(conn):
     return False
 
 
-def later_option_check(args,conn):
+def later_option_check(args, conn):
 
     # Check Disk Info
     data_domains = get_data_domains(conn)
@@ -254,7 +267,7 @@ def later_option_check(args,conn):
     # Check VM network
     vm_networks = get_vm_network(conn)
     for vmn in args.vmnet:
-        if not vmn in vm_networks:
+        if vmn not in vm_networks:
             print("Specified virtual machine network \"{0}\" is not exist or vm network,abort"
                   .format(vmn))
             return False
@@ -264,15 +277,15 @@ def later_option_check(args,conn):
     if not iso_domain_files:
         return False
 
-    if args.kernel != None and args.kernel not in iso_domain_files:
+    if args.kernel is not None and args.kernel not in iso_domain_files:
         print("Specified kernel \"{0}\" is not exist in iso domain,abort".format(args.kernel))
         return False
 
-    if args.initrd != None and args.initrd not in iso_domain_files:
+    if args.initrd is not None and args.initrd not in iso_domain_files:
         print("Specified initrd \"{0}\" is not exist in iso domain,abort".format(args.initrd))
         return False
 
-    if args.iso != None and args.iso not in iso_domain_files:
+    if args.iso is not None and args.iso not in iso_domain_files:
         print("Specified iso file \"{0}\" is not exist in iso domain,abort".format(args.iso))
         return False
 
@@ -287,8 +300,8 @@ def later_option_check(args,conn):
 
 def main():
 
-    parser=option_parser()
-    args=parser.parse_args()
+    parser = option_parser()
+    args = parser.parse_args()
 
     if not early_option_check(args):
         sys.exit(-1)
@@ -310,11 +323,11 @@ def main():
     networks_service = dcs_service.service(dc.id).networks_service()
     profiles_service = connection.system_service().vnic_profiles_service()
 
-    if not later_option_check(args,connection):
+    if not later_option_check(args, connection):
         connection.close()
         sys.exit(-1)
 
-    shorthand={
+    shorthand = {
         'rhel6': 'rhel_6x64',
         'rhel7': 'rhel_7x64',
         'rhel8': 'rhel_8x64',
@@ -322,7 +335,7 @@ def main():
         'debian': 'debian_7',
     }
 
-    vmtype={
+    vmtype = {
         'server': types.VmType.SERVER,
         'desktop': types.VmType.DESKTOP,
         'high_performance': types.VmType.HIGH_PERFORMANCE
@@ -346,7 +359,7 @@ def main():
         vm.memory_policy = types.MemoryPolicy(
             max=args.max_memory*1024*1024,
             guaranteed=args.guaranteed_memory*1024*1024,
-            ballooning = True if args.balloon == 1 else False)
+            ballooning=True if args.balloon == 1 else False)
 
     vm.cpu = types.Cpu()
     vm.cpu.architecture = types.Architecture.X86_64
@@ -364,7 +377,7 @@ def main():
 
     # Attach network interface(s)
     nics_service = vms_service.vm_service(vm.id).nics_service()
-    nicnum=0
+    nicnum = 0
 
     for netname in args.vmnet:
         network = next(
@@ -378,9 +391,9 @@ def main():
                 profile_id = profile.id
                 break
 
-        if profile_id != None:
-            nicnum=nicnum+1
-            print("Attaching nic{0}(Network:{1})".format(nicnum,netname))
+        if profile_id is not None:
+            nicnum = nicnum + 1
+            print("Attaching nic{0}(Network:{1})".format(nicnum, netname))
             nics_service.add(
                 types.Nic(
                     name="nic{0}".format(nicnum),
@@ -395,10 +408,10 @@ def main():
     disks_service = connection.system_service().disks_service()
     disknum = 0
     for d in args.vmdisk:
-        disknum+=1
+        disknum += 1
         new_disk = types.DiskAttachment()
         new_disk.disk = types.Disk()
-        new_disk.disk.name = "{0}_Disk{1}".format(args.name,disknum)
+        new_disk.disk.name = "{0}_Disk{1}".format(args.name, disknum)
         new_disk.disk.provisioned_size = int(d.split(':')[1])*2**30
         new_disk.disk.storage_domains = [
             types.StorageDomain(name=d.split(':')[0])]
@@ -422,7 +435,7 @@ def main():
             print("Waiting disk attach complete")
             time.sleep(5)
 
-    if args.ks != None or args.ps != None or args.ai != None:
+    if args.ks is not None or args.ps is not None or args.ai is not None:
         # one-shot VM configuration for Kickstart/preseed
         one_vm = types.Vm()
         one_vm.os = types.OperatingSystem()
@@ -433,7 +446,7 @@ def main():
         one_vm.cdroms.append(types.Cdrom())
         one_vm.cdroms[0].file = types.File()
         one_vm.cdroms[0].file.id = args.iso
-        if args.dns == None:
+        if args.dns is None:
             args.dns = ""
         elif args.os == 'rhel6':
             args.dns = 'dns='+args.dns
@@ -442,24 +455,24 @@ def main():
 
         if args.os == 'rhel6':
             ksdev = args.network.split(':')[5]
-            ksip  = args.network.split(':')[0]
-            ksnm  = calc_netmask(int(args.network.split(':')[3]))
-            ksgw  = args.network.split(':')[2]
+            ksip = args.network.split(':')[0]
+            ksnm = calc_netmask(int(args.network.split(':')[3]))
+            ksgw = args.network.split(':')[2]
             args.network = "ksdevice={0} ip={1} netmask={2} gateway={3}".format(ksdev, ksip, ksnm, ksgw)
 
-        if args.ks != None:
+        if args.ks is not None:
             if args.os == 'rhel6':
                 one_vm.os.cmdline = args.network+" "+args.dns+" ks="+args.ks
             else:
                 one_vm.os.cmdline = args.network+" "+args.dns+" inst.ks="+args.ks
-        if args.ps != None:
+        if args.ps is not None:
             one_vm.os.cmdline = "auto=true url="+args.ps
-        if args.ai != None:
+        if args.ai is not None:
             one_vm.os.cmdline = "autoinstall ds=nocloud-net;s="+args.ai
 
         vm_service = vms_service.vm_service(vm.id)
         print("Starting automatic OS installation on {0}".format(args.name))
-        vm_service.start(vm=one_vm,volatile=True)
+        vm_service.start(vm=one_vm, volatile=True)
 
     # Close the connection to the server:
     connection.close()
@@ -467,4 +480,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
