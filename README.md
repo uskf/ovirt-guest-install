@@ -69,6 +69,7 @@ usage: ovirt-guest-install.py [-h] [--name NAME] [--memory MEMORY]
                               [--guaranteed-memory GUARANTEED_MEMORY]
                               [--cpu CPU] [--vmnet NETWORKNAME]
                               [--vmdisk SD:SIZE:FORMAT] [--os OSNAME]
+                              [--biostype BIOSTYPE]
                               [--type {server,desktop,high_performance}]
                               [--enable-memory-balloon]
                               [--disable-memory-balloon] [--enable-sound]
@@ -95,6 +96,12 @@ optional arguments:
                         This option can be specified multiple times.(first disk marked as bootable)
   --os OSNAME           OS name being installed (Default:rhel8)
                         Shorthand:debian,rhel6,rhel7,rhel8,rhel9,ubuntu
+  --biostype BIOSTYPE   Virtual Machine Chipset/Firmware type.
+                        bios_i440fx: i440fx chipset with BIOS
+                        bios_q35: q35 chipset with BIOS
+                        uefi_q35: q35 chipset with UEFI
+                        uefi_q35_secure: q35 chipset with UEFI with SecureBoot
+                        default: inherit from cluster's default
   --type {server,desktop,high_performance}
                         Virtual Machine Type (Default:server)
   --enable-memory-balloon

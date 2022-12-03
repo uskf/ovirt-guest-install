@@ -51,6 +51,11 @@ def option_parser():
         default="rhel8",
         help='OS name being installed (Default:%(default)s)\nShorthand:debian,rhel6,rhel7,rhel8,rhel9,ubuntu')
     parser.add_argument(
+        "--biostype",
+        choices=['default', 'bios_i440fx', 'bios_q35', 'uefi_q35', 'uefi_q35_secure'],
+        metavar="BIOSTYPE",
+        help='Virtual Machine Chipset/Firmware type.\nbios_i440fx: i440fx chipset with BIOS\nbios_q35: q35 chipset with BIOS\nuefi_q35: q35 chipset with UEFI\nuefi_q35_secure: q35 chipset with UEFI with SecureBoot\ndefault: inherit from cluster\'s default')
+    parser.add_argument(
         "--type",
         choices=['server', 'desktop', 'high_performance'],
         default="server",
@@ -342,6 +347,14 @@ def main():
         'high_performance': types.VmType.HIGH_PERFORMANCE
     }
 
+    biostype = {
+        'bios_i440fx': types.BiosType.I440FX_SEA_BIOS,
+        'bios_q35': types.BiosType.Q35_SEA_BIOS,
+        'uefi_q35': types.BiosType.Q35_OVMF,
+        'uefi_q35_secure': types.BiosType.Q35_SECURE_BOOT,
+        'default': types.BiosType.CLUSTER_DEFAULT
+    }
+
     # Creating new virtual machine
     vm = types.Vm()
     vm.name = args.name
@@ -369,6 +382,9 @@ def main():
     if args.sound != 0:
         vm.soundcard_enabled = True if args.sound == 1 else False
     vm.type = vmtype[args.type]
+    if args.biostype is not None:
+        vm.bios = types.Bios()
+        vm.bios.type = biostype[args.biostype]
 
     print("Creating New Virtual Machine:{0}".format(args.name))
     vm = vms_service.add(vm)
