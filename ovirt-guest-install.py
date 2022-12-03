@@ -49,7 +49,7 @@ def option_parser():
         "--os",
         metavar="OSNAME",
         default="rhel8",
-        help='OS name being installed (Default:%(default)s)\nShorthand:debian,rhel6,rhel7,rhel8,ubuntu')
+        help='OS name being installed (Default:%(default)s)\nShorthand:debian,rhel6,rhel7,rhel8,rhel9,ubuntu')
     parser.add_argument(
         "--type",
         choices=['server', 'desktop', 'high_performance'],
@@ -331,6 +331,7 @@ def main():
         'rhel6': 'rhel_6x64',
         'rhel7': 'rhel_7x64',
         'rhel8': 'rhel_8x64',
+        'rhel9': 'rhel_9x64',
         'ubuntu': 'ubuntu_14_04',
         'debian': 'debian_7',
     }

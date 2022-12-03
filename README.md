@@ -94,7 +94,7 @@ optional arguments:
                         Ex: --vmdisk DATA1:50:RAW
                         This option can be specified multiple times.(first disk marked as bootable)
   --os OSNAME           OS name being installed (Default:rhel8)
-                        Shorthand:debian,rhel6,rhel7,rhel8,ubuntu
+                        Shorthand:debian,rhel6,rhel7,rhel8,rhel9,ubuntu
   --type {server,desktop,high_performance}
                         Virtual Machine Type (Default:server)
   --enable-memory-balloon
